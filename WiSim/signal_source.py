@@ -1,10 +1,11 @@
 import numpy as np
 from numpy import random
 
+from WiSim.utils import complex_randn
+
 
 class SignalSource:
 
-    # TYPES = {'gauss', 'qpsk', 'bit'}
     TYPE_GAUSS = 1
     TYPE_QPSK = 2
     TYPE_BIT = 3
@@ -13,22 +14,20 @@ class SignalSource:
     def __init__(self, power, signal_type):
         self.signal_type = signal_type
         self.power = power
-        self.magnitude = np.sqrt(power / 2)
+        self.magnitude = np.sqrt(power)
 
     def get_signal(self, signal_size):
         if self.signal_type == SignalSource.TYPE_GAUSS:
-            signal = (random.randn(*signal_size) + 1j * random.randn(*signal_size))
-
+            return self.magnitude*complex_randn(signal_size)
         if self.signal_type == SignalSource.TYPE_QPSK:
             i_signal = random.randint(2, size=signal_size)
             q_signal = random.randint(2, size=signal_size)
             i_signal[i_signal == 0] = -1
             q_signal[q_signal == 0] = -1
-            signal = i_signal + 1j * q_signal
+            signal = (i_signal + 1j * q_signal)/SignalSource.SQRT_2
         if self.signal_type == SignalSource.TYPE_BIT:
             SignalSource.TYPE_BIT
-            signal = random.randint(2, size=signal_size)
-            return signal;
+            return random.randint(2, size=signal_size)
 
         return signal * self.magnitude
 
