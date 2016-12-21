@@ -1,8 +1,9 @@
 import unittest
 import numpy as np
 from numpy.linalg.linalg import norm
+from numpy.testing.utils import assert_array_equal, assert_array_almost_equal
 
-from WiSim.utils import complex_randn, norm_vectors_in_matrix
+from WiSim.utils import complex_randn, norm_vectors_in_matrix, steering_vector
 
 
 class TestUtils(unittest.TestCase):
@@ -21,3 +22,9 @@ class TestUtils(unittest.TestCase):
         norm_vectors_in_matrix(mx, 1)
         for i_row in np.arange(n_rows):
             self.assertAlmostEqual(1, norm(mx[i_row, :]))
+
+    def test_steering_vector(self):
+        A = steering_vector(
+            np.array([0, np.pi/6, np.pi/2]), n_antennas=4)
+        expected = np.array([[1, 1, 1, 1], [1, 1j, -1, -1j], [1, -1, 1, -1]])
+        assert_array_almost_equal(expected.transpose(), A)

@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def marchenko_pastur(n_dimensions: int = 8, n_realizations: int = 1000) -> None:
+def marchenko_pastur(n_dimensions: int = 8, n_realizations: int =1000) -> None:
 
     singular_values = np.zeros((n_dimensions*n_realizations))
     for i in np.arange(0, n_realizations):
@@ -18,6 +18,7 @@ def marchenko_pastur(n_dimensions: int = 8, n_realizations: int = 1000) -> None:
 
     plt.plot(bins[:-1], density)
     plt.show()
+
 
 def precoding():
     n_users = 4
@@ -41,7 +42,7 @@ def precoding():
     print('Algorithm %s gives mean %f ' % (algorithm, c))
 
 
-def sinr_mu_mimo(channel, precoder, noise_power=1):
+def sinr_mu_mimo(channel: np.matrix.__class__, precoder: np.matrix.__class__, noise_power: float = 1):
     correlation = np.abs(channel.getH() * precoder.getH())**2
     n_users = channel.shape[1]
     sinr = np.zeros(n_users)
