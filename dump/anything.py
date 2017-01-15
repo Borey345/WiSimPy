@@ -1,10 +1,11 @@
-from mpl_toolkits.mplot3d.art3d import norm_angle
-from scipy.linalg.basic import pinv
-from scipy.linalg.decomp_svd import svd, svdvals
+import matplotlib.pyplot as plt
+import numpy as np
+from math import sqrt
+from mpmath import conj
+from numpy.lib.type_check import real
+from scipy.linalg.decomp_svd import svdvals
 
 from WiSim.utils import complex_randn, norm_vectors_in_matrix, compute_throughput
-import numpy as np
-import matplotlib.pyplot as plt
 
 
 def marchenko_pastur(n_dimensions: int = 8, n_realizations: int =1000) -> None:
@@ -50,4 +51,28 @@ def sinr_mu_mimo(channel: np.matrix.__class__, precoder: np.matrix.__class__, no
         sinr[i_user] = (correlation[i_user,i_user])/\
                        (noise_power + np.sum(correlation[i_user, np.arange(n_users) != i_user]))
     return sinr
+
+
+def cholesky_decomposition(input_matrix: np.matrix.__class__):
+    n_dims = input_matrix.shape[0]
+
+    L = input_matrix.copy()
+
+    pivots = np.empty(3)
+
+    for i in range(n_dims):
+        for j in range(i, n_dims):
+            accumulator = L[i, j]
+
+            for k in range(i-1, 0, -1):
+                accumulator -= L[i, k]*conj(L[j, k])
+
+            if i == j:
+                if real(accumulator) <= 0:
+                    raise ValueError('Singular or non-hermitian matrix')
+                pivots[i] = sqrt(accumulator)
+            else:
+                L[j, i] = accumulator/pivots[i]
+
+    return L
 
