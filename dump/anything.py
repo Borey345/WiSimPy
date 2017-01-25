@@ -64,15 +64,16 @@ def cholesky_decomposition(input_matrix: np.matrix.__class__):
         for j in range(i, n_dims):
             accumulator = L[i, j]
 
-            for k in range(i-1, 0, -1):
+            for k in range(i-1, -1, -1):
                 accumulator -= L[i, k]*conj(L[j, k])
 
             if i == j:
-                if real(accumulator) <= 0:
+                if accumulator.real <= 0:
                     raise ValueError('Singular or non-hermitian matrix')
-                pivots[i] = sqrt(accumulator)
+                pivots[i] = sqrt(accumulator.real)
+                L[i, i] = pivots[i]
             else:
                 L[j, i] = accumulator/pivots[i]
 
-    return L
+    return np.tril(L)
 
